@@ -131,7 +131,20 @@ sudo usermod -aG docker ubuntu && newgrp docker
 #
 - <b id="Sonar">Install and configure SonarQube (Master machine)</b>
 ```bash
-docker run -itd --name SonarQube-Server -p 9000:9000 sonarqube:lts-community
+docker run -d \
+  --name sonarqube \
+  -p 9000:9000 \
+  --restart always \
+  sonarqube:latest
+```
+#
+- <b id="Sonar">Install and configure Nexus (Master machine)</b>
+```bash
+docker run -d \
+  --name nexus \
+  -p 8081:8081 \
+  --restart always \
+  sonatype/nexus3:latest
 ```
 #
 - <b id="Trivy">Install Trivy (Jenkins Worker)</b>
@@ -277,8 +290,26 @@ sudo apt-get install trivy -y
 #
 - <b>Navigate to <mark> Manage Jenkins --> credentials</mark> and add credentials for docker login to push docker image:</b>
 ![image](https://github.com/user-attachments/assets/1a8287fc-b205-4156-8342-3f660f15e8fa)
+#
+- <b>Create a <mark>Bankapp-CI</mark> pipeline</b>
 
-  
+#
+- <b>Create one more pipeline <mark>Wanderlust-CD</mark></b>
+#
+- <b>Provide permission to docker socket so that docker build and push command do not fail (Jenkins Worker)</b>
+```bash
+chmod 777 /var/run/docker.sock
+```
+#
+- <b> Go to Master Machine and add our own eks cluster to argocd for application deployment using cli</b>
+  - <b>Login to argoCD from CLI</b>
+  ```bash
+   argocd login 52.53.156.187:32738 --username admin
+  ```
+> [!Tip]
+> 52.53.156.187:32738 --> This should be your argocd url
+
+  ![Screenshot 2025-04-28 124800](https://github.com/user-attachments/assets/0b8dec7e-be1b-45dc-96c3-c9e6b99623f7)
 
 
 
