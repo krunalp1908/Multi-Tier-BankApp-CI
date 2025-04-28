@@ -307,8 +307,10 @@ cat admin.password
 - <b>Paste that password in nexus password block</b>
 #
 - Configuring nexus in jenkins and in pom.xml
-  
+  - Edit pox.xml file to this type wehere you add Nexus maven releases and maven snapshots in pom.xml like below image
+    ![Screenshot 2025-04-28 201757](https://github.com/user-attachments/assets/6a8b64a6-5ea4-4f0c-936b-11b6f9de3b25)
 
+#
 - <b>Create a <mark>Bankapp-CI</mark> pipeline</b>
 
 #
