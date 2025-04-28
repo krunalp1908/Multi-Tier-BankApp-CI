@@ -147,6 +147,16 @@ docker run -d \
   sonatype/nexus3:latest
 ```
 #
+- <b id="Sonar">Install and configure mysql (Master machine)</b>
+```bash
+docker run -d \
+  --name bankapp-mysql \
+  -e MYSQL_ROOT_PASSWORD=Test@123 \
+  -e MYSQL_DATABASE=bankappdb \
+  -p 3306:3306 \
+  mysql:8.0 
+```
+#
 - <b id="Trivy">Install Trivy (Jenkins Worker)</b>
 ```bash
 sudo apt-get install wget apt-transport-https gnupg lsb-release -y
@@ -326,12 +336,11 @@ chmod 777 /var/run/docker.sock
 - <b>Create a <mark>Bankapp-CI</mark> pipeline</b>
 
 #
-- <b>Create one more pipeline <mark>Wanderlust-CD</mark></b>
+- <b>Create one more pipeline <mark>Bankapp-CD</mark></b>
 #
-- <b>Provide permission to docker socket so that docker build and push command do not fail (Jenkins Worker)</b>
-```bash
-chmod 777 /var/run/docker.sock
-```
+- <b>After completing the pipeline some changes has to be done before running deployment and service in EKS Cluster<b>
+  - change the docker username in Bankapp folder deployment.yml file. 
+
 #
 - <b> Go to Master Machine and add our own eks cluster to argocd for application deployment using cli</b>
   - <b>Login to argoCD from CLI</b>
