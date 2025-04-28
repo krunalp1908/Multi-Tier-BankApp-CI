@@ -292,24 +292,22 @@ sudo apt-get install trivy -y
 ![image](https://github.com/user-attachments/assets/1a8287fc-b205-4156-8342-3f660f15e8fa)
 #
 - <b>Go to Nexus URL and sign up with username:- admin and for password do below steps: -</b>
-```
-bash
+```bash
 docker exec -it <docker-cont-id> bash
 ```
-```
-bash
+```bash
 cd sonatype-work
 ```
-```
-bash
+```bash
 cd neuxs3
 ```
-```
-bash
+```bash
 cat admin.password
 ```
 - <b>Paste that password in nexus password block</b>
-
+#
+- Configuring nexus in jenkins and in pom.xml
+  
 
 - <b>Create a <mark>Bankapp-CI</mark> pipeline</b>
 
