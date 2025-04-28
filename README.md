@@ -291,6 +291,26 @@ sudo apt-get install trivy -y
 - <b>Navigate to <mark> Manage Jenkins --> credentials</mark> and add credentials for docker login to push docker image:</b>
 ![image](https://github.com/user-attachments/assets/1a8287fc-b205-4156-8342-3f660f15e8fa)
 #
+- <b>Go to Nexus URL and sign up with username:- admin and for password do below steps: -</b>
+```
+bash
+docker exec -it <docker-cont-id> bash
+```
+```
+bash
+cd sonatype-work
+```
+```
+bash
+cd neuxs3
+```
+```
+bash
+cat admin.password
+```
+- <b>Paste that password in nexus password block</b>
+
+
 - <b>Create a <mark>Bankapp-CI</mark> pipeline</b>
 
 #
