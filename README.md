@@ -339,7 +339,8 @@ chmod 777 /var/run/docker.sock
 - <b>Create one more pipeline <mark>Bankapp-CD</mark></b>
 #
 - <b>After completing the pipeline some changes has to be done before running deployment and service in EKS Cluster<b>
-  - change the docker username in Bankapp folder deployment.yml file. 
+  - change the docker username in Bankapp folder deployment.yml file.
+    
 
 #
 - <b> Go to Master Machine and add our own eks cluster to argocd for application deployment using cli</b>
@@ -352,6 +353,35 @@ chmod 777 /var/run/docker.sock
 
   ![Screenshot 2025-04-28 124800](https://github.com/user-attachments/assets/0b8dec7e-be1b-45dc-96c3-c9e6b99623f7)
 
+  - <b>Check how many clusters are available in argocd </b>
+  ```bash
+  argocd cluster list
+  ```
+  ![image](https://github.com/user-attachments/assets/76fe7a45-e05c-422d-9652-bdaee02d630f)
+  - <b>Get your cluster name</b>
+  ```bash
+  kubectl config get-contexts
+  ```
+  ![image](https://github.com/user-attachments/assets/4cab99aa-cef3-45f6-9150-05004c2f09f8)
+  - <b>Add your cluster to argocd</b>
+  ```bash
+  argocd cluster add Wanderlust@wanderlust.us-west-1.eksctl.io --name wanderlust-eks-cluster
+  ```
+  > [!Tip]
+  > Wanderlust@wanderlust.us-west-1.eksctl.io --> This should be your EKS Cluster Name.
+
+  ![image](https://github.com/user-attachments/assets/0f36aafd-bab9-4ef8-ba5d-3eb56d850604)
+  - <b> Once your cluster is added to argocd, go to argocd console <mark>Settings --> Clusters</mark> and verify it</b>
+  ![image](https://github.com/user-attachments/assets/4490b632-19fd-4499-a341-fabf8488d13c)
+#
+- <b>Go to <mark>Settings --> Repositories</mark> and click on <mark>Connect repo</mark> </b>
+![image](https://github.com/user-attachments/assets/cc8728e5-546b-4c46-bd4c-538f4cd6a63d)
+![image](https://github.com/user-attachments/assets/eb3646e2-db84-4439-a11a-d4168080d9cc)
+![image](https://github.com/user-attachments/assets/a07f8703-5ef3-4524-aaa7-39a139335eb7)
+> [!Note]
+> Connection should be successful
+
+- <b>Now, go to <mark>Applications</mark> and click on <mark>New App</mark></b>
 
 
 
