@@ -121,7 +121,116 @@ sudo apt-get install jenkins -y
   - And your jenkins worker node is added
   ![357403596-cab93696-a4e2-4501-b164-8287d7077eef](https://github.com/user-attachments/assets/a37ed689-0131-4b49-ba26-d3c51c9db0f0)
 
+# 
+- <b id="docker">Install docker (Jenkins Worker)</b>
 
+```bash
+sudo apt install docker.io -y
+sudo usermod -aG docker ubuntu && newgrp docker
+```
+#
+- <b id="Sonar">Install and configure SonarQube (Master machine)</b>
+```bash
+docker run -itd --name SonarQube-Server -p 9000:9000 sonarqube:lts-community
+```
+#
+- <b id="Trivy">Install Trivy (Jenkins Worker)</b>
+```bash
+sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update -y
+sudo apt-get install trivy -y
+```
+#
+- <b id="Argo">Install and Configure ArgoCD (Master Machine)</b>
+  - <b>Create argocd namespace</b>
+  ```bash
+  kubectl create namespace argocd
+  ```
+  - <b>Apply argocd manifest</b>
+  ```bash
+  kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+  ```
+  - <b>Make sure all pods are running in argocd namespace</b>
+  ```bash
+  watch kubectl get pods -n argocd
+  ```
+  - <b>Install argocd CLI</b>
+  ```bash
+  sudo curl --silent --location -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.4.7/argocd-linux-amd64
+  ```
+  - <b>Provide executable permission</b>
+  ```bash
+  sudo chmod +x /usr/local/bin/argocd
+  ```
+  - <b>Check argocd services</b>
+  ```bash
+  kubectl get svc -n argocd
+  ```
+  - <b>Change argocd server's service from ClusterIP to NodePort</b>
+  ```bash
+  kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
+  ```
+  - <b>Confirm service is patched or not</b>
+  ```bash
+  kubectl get svc -n argocd
+  ```
+  - <b> Check the port where ArgoCD server is running and expose it on security groups of a worker node</b>
+  ![Screenshot 2025-04-28 122145](https://github.com/user-attachments/assets/d58ae72c-acc0-4763-8c27-c56e62125a94)
+
+  - <b>Access it on browser, click on advance and proceed with</b>
+  ```bash
+  <public-ip-worker>:<port>
+  ```
+  ![Screenshot 2025-04-28 122204](https://github.com/user-attachments/assets/d0393a09-60cd-4406-8213-64052abcd1f0)
+  ![Screenshot 2025-04-28 122226](https://github.com/user-attachments/assets/8fe98148-f343-439c-be18-2ba9c5cca8f7)
+  ![Screenshot 2025-04-28 122236](https://github.com/user-attachments/assets/22be503b-1022-4873-abe3-84cb2e3c7984)
+
+  - <b>Fetch the initial password of argocd server</b>
+  ```bash
+  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+  ```
+  - <b>Username: admin</b>
+  - <b> Now, go to <mark>User Info</mark> and update your argocd password
+#
+#
+## Steps to add email notification
+- <b id="Mail">Go to your Jenkins Master EC2 instance and allow 465 port number for SMTPS</b>
+#
+- <b>Now, we need to generate an application password from our gmail account to authenticate with jenkins</b>
+  - <b>Open gmail and go to <mark>Manage your Google Account --> Security</mark></b>
+> [!Important]
+> Make sure 2 step verification must be on
+
+  ![Screenshot 2025-04-28 122629](https://github.com/user-attachments/assets/78859961-73c0-4166-ad84-bd26b4f90638)
+
+
+  - <b>Search for <mark>App password</mark> and create a app password for jenkins</b>
+  ![Screenshot 2025-04-28 122809](https://github.com/user-attachments/assets/be9241e0-4608-4acd-a8a6-9f444ad1bff4)
+  ![Screenshot 2025-04-28 122907](https://github.com/user-attachments/assets/15201cc3-b033-4b9a-87f6-7b8e9eb9ccaa)
+
+#
+- <b> Once, app password is create and go back to jenkins <mark>Manage Jenkins --> Credentials</mark> to add username and password for email notification</b>
+![Screenshot 2025-04-28 123003](https://github.com/user-attachments/assets/dd6ea14c-060c-4507-9b36-8b8562986491)
+
+# 
+- <b> Go back to <mark>Manage Jenkins --> System</mark> and search for <mark>Extended E-mail Notification</mark></b>
+![image](https://github.com/user-attachments/assets/bac81e24-bb07-4659-a251-955966feded8)
+#
+- <b>Scroll down and search for <mark>E-mail Notification</mark> and setup email notification</b>
+> [!Important]
+> Enter your gmail password which we copied recently in password field <mark>E-mail Notification --> Advance</mark>
+
+
+
+  
+
+
+
+
+
+  
 
 
 
