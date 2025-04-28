@@ -75,7 +75,7 @@ sudo apt-get install jenkins -y
   terraform apply --auto-approve
   ```
 
-  > [!Note]
+> [!Note]
 >  Make sure the ssh-public-key "eks-nodegroup-key is available in your aws account"
 
 #
