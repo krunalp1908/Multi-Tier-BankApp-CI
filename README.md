@@ -306,9 +306,21 @@ cat admin.password
 ```
 - <b>Paste that password in nexus password block</b>
 #
-- Configuring nexus in jenkins and in pom.xml
-  - Edit pox.xml file to this type wehere you add Nexus maven releases and maven snapshots in pom.xml like below image
+- <b>Configuring nexus in jenkins and in pom.xml<b>
+  - Edit pox.xml file to this type wehere you add URLs of Nexus maven releases and maven snapshots in pom.xml like below image
     ![Screenshot 2025-04-28 201757](https://github.com/user-attachments/assets/6a8b64a6-5ea4-4f0c-936b-11b6f9de3b25)
+  - Create Config managed file for adding server URLs in jenkins lke below image
+    ![Screenshot 2025-04-28 202349](https://github.com/user-attachments/assets/f6fbc1b2-a6dc-44ba-9868-7b9d3bd86ced)
+#
+
+- Configure Maven in jenkins tools: -
+  ![Screenshot 2025-04-28 202632](https://github.com/user-attachments/assets/8b51e13b-661a-4cdc-9293-5adb62f78e06)
+  
+#
+- <b>Provide permission to docker socket so that docker build and push command do not fail (Jenkins Worker)</b>
+```bash
+chmod 777 /var/run/docker.sock
+```
 
 #
 - <b>Create a <mark>Bankapp-CI</mark> pipeline</b>
