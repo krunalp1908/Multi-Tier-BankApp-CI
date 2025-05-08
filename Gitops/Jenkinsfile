@@ -1,0 +1,110 @@
+@Library('Shared') _
+pipeline {
+    agent any
+
+    stages {
+        stage("Git: Code Checkout Again") {
+            steps {
+                script {
+                    code_checkout("https://github.com/krunalp1908/Multi-Tier-BankApp.git", "main")
+                }
+            }
+        }
+
+        stage('Verify: Docker Image Tags') {
+            steps {
+                echo "DOCKER_TAG: ${params.DOCKER_TAG}"
+            }
+        }
+
+       	stage("Update: Kubernetes Manifests") {
+            steps {
+                dir('kubernetes/bankapp') {
+                    script {
+                        def currentTag = sh(script: "grep 'bankapp:' bankapp-ds.yml | head -n 1 | sed 's/.*bankapp://'", returnStdout: true).trim()
+                        echo "Current Tag in Manifest: ${currentTag}"
+                        echo "New Tag from Parameter: ${params.DOCKER_TAG}"
+        
+                        if (currentTag == params.DOCKER_TAG) {
+                            echo "Docker image tag is already up-to-date. Skipping manifest update."
+                        } else {
+                            echo "Updating manifest with new tag: ${params.DOCKER_TAG}"
+                            sh """
+                                sed -i -e 's|bankapp:.*|bankapp:${params.DOCKER_TAG}|g' bankapp-ds.yml
+                            """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Git: Push Updated Manifests") {
+            steps {
+                withCredentials([gitUsernamePassword(credentialsId: 'Github-cred', gitToolName: 'Default')]) {
+                    dir('kubernetes/bankapp') {
+                        sh '''
+                            echo "Checking repository status: "
+                            git status
+
+                            echo "Adding changes to git: "
+                            git add .
+
+                            echo "Committing changes: "
+                            git commit -m "Updated environment variables"
+
+                            echo "Pushing changes to GitHub: "
+                            git push https://github.com/krunalp1908/Multi-Tier-BankApp.git main
+                        '''
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            script {
+                emailext attachLog: true,
+                from: 'estriker6@gmail.com',
+                subject: "Wanderlust Application has been updated and deployed - '${currentBuild.result}'",
+                body: """
+                    <html>
+                    <body>
+                        <div style="background-color: #FFA07A; padding: 10px; margin-bottom: 10px;">
+                            <p style="color: black; font-weight: bold;">Project: ${env.JOB_NAME}</p>
+                        </div>
+                        <div style="background-color: #90EE90; padding: 10px; margin-bottom: 10px;">
+                            <p style="color: black; font-weight: bold;">Build Number: ${env.BUILD_NUMBER}</p>
+                        </div>
+                        <div style="background-color: #87CEEB; padding: 10px; margin-bottom: 10px;">
+                            <p style="color: black; font-weight: bold;">URL: ${env.BUILD_URL}</p>
+                        </div>
+                    </body>
+                    </html>
+            """,
+            to: 'krunalparekh654@gmail.com',
+            mimeType: 'text/html'
+            }
+        }
+      failure {
+            script {
+                emailext attachLog: true,
+                from: 'estriker6@gmail.com',
+                subject: "Wanderlust Application build failed - '${currentBuild.result}'",
+                body: """
+                    <html>
+                    <body>
+                        <div style="background-color: #FFA07A; padding: 10px; margin-bottom: 10px;">
+                            <p style="color: black; font-weight: bold;">Project: ${env.JOB_NAME}</p>
+                        </div>
+                        <div style="background-color: #90EE90; padding: 10px; margin-bottom: 10px;">
+                            <p style="color: black; font-weight: bold;">Build Number: ${env.BUILD_NUMBER}</p>
+                        </div>
+                    </body>
+                    </html>
+            """,
+            to: 'krunalparekh654@gmail.com',
+            mimeType: 'text/html'
+            }
+        }
+    }
+}

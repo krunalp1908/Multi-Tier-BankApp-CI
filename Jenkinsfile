@@ -30,7 +30,7 @@ pipeline {
         stage("Git Checkout") {
             steps {
                 script {
-                    code_checkout("https://github.com/krunalp1908/Multi-Tier-BankApp-CI.git", "main")
+                    code_checkout("https://github.com/krunalp1908/Multi-Tier-BankApp.git", "main")
                 }
             }
         }
